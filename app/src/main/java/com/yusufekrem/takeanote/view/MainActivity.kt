@@ -1,24 +1,21 @@
 package com.yusufekrem.takeanote.view
 
+import android.content.DialogInterface
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
-import android.widget.Toast
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.drawerlayout.widget.DrawerLayout
-import com.google.android.material.navigation.NavigationView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import com.yusufekrem.takeanote.R
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import com.yusufekrem.takeanote.databinding.ActivityMainBinding
+import kotlin.system.exitProcess
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var editor :SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,19 +23,32 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        binding.logoutButton.setOnClickListener{
-            val intent = Intent(this,SignInActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
+        sharedPreferences = getSharedPreferences("PREFS_NAME", MODE_PRIVATE);
+        editor = sharedPreferences.edit()
 
-        binding.imageButton.setOnClickListener{
-            val intent= Intent(this,NotePageActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
+        logOut()
     }
 
 
+    private fun logOut(){
+        binding.logoutButton.setOnClickListener{
+            checkPositiveButton()
+        }
+    }
+
+    private fun checkPositiveButton(){
+        val mBuilder = AlertDialog.Builder(this)
+            .setTitle("Confirm")
+            .setMessage("Are you sure you want to exit?")
+            .setPositiveButton("Yes", null)
+            .setNegativeButton("No", null)
+            .show()
+       // Function for the positive button
+        // is programmed to exit the application
+        val mPositiveButton = mBuilder.getButton(AlertDialog.BUTTON_POSITIVE)
+        mPositiveButton.setOnClickListener {
+            finish()
+        }
+    }
 
 }
